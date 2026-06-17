@@ -25,6 +25,18 @@ npm run start
 
 LegalPage AI uses `data/legalpage-ai.json` for users, sessions, documents, templates, settings, and analytics. On serverless platforms, persistent file storage may reset between deployments. For production SaaS at scale, replace `src/lib/store.ts` with a database adapter while keeping the same `AppDatabase` contract.
 
+## Vercel Demo Mode
+
+Vercel has a read-only deployment filesystem, so LegalPage AI automatically switches to in-memory demo storage on Vercel. It does not create or modify `data/legalpage-ai.json` there.
+
+See `VERCEL_DEMO_MODE.md`.
+
+## VPS Persistent Mode
+
+For local development, CodeCanyon deployments, and VPS installs, LegalPage AI keeps persistent JSON file storage through `FileStorageProvider`.
+
+See `VPS_PERSISTENT_MODE.md`.
+
 ## Security Checklist
 
 - Change demo account passwords after installation.

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { DemoModeBanner } from "@/components/DemoModeBanner";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -63,6 +64,7 @@ export default function RootLayout({
             }),
           }}
         />
+        <DemoModeBanner />
         {children}
       </body>
     </html>

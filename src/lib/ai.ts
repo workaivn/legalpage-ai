@@ -3,6 +3,7 @@ import "server-only";
 import OpenAI from "openai";
 import { documentTypes, type DocumentType, type GeneratedDocument, type GeneratorFormData, type ProviderSettings, type ProviderType } from "@/lib/types";
 import { legalDisclaimer, markdownToBasicHtml } from "@/lib/format";
+import { isVercelDemoMode } from "@/lib/store";
 
 type ModelDocument = {
   title: string;
@@ -19,6 +20,13 @@ export async function generateDocumentsWithProvider({
   requestedDocuments?: readonly DocumentType[];
 }) {
   const provider = settings.activeProvider;
+  if (isVercelDemoMode() && !hasConfiguredProviderKey(settings)) {
+    return {
+      provider,
+      documents: createDemoDocuments(formData, requestedDocuments),
+    };
+  }
+
   const prompt = buildPrompt(formData, requestedDocuments);
   const content =
     provider === "openai"
@@ -32,6 +40,57 @@ export async function generateDocumentsWithProvider({
     provider,
     documents: normalizeDocuments(parsed.documents || [], requestedDocuments),
   };
+}
+
+function hasConfiguredProviderKey(settings: ProviderSettings) {
+  return Boolean(
+    settings.openaiApiKey ||
+      process.env.OPENAI_API_KEY ||
+      settings.geminiApiKey ||
+      process.env.GEMINI_API_KEY ||
+      settings.anthropicApiKey ||
+      process.env.ANTHROPIC_API_KEY
+  );
+}
+
+function createDemoDocuments(formData: GeneratorFormData, requestedDocuments: readonly DocumentType[]): GeneratedDocument[] {
+  return requestedDocuments.map((title) => {
+    const markdown = `# ${title}
+
+${legalDisclaimer}
+
+## Overview
+This demo-mode ${title} draft was generated for ${formData.projectName}. It shows the full LegalPage AI workflow on Vercel without writing to the filesystem or requiring an AI provider key.
+
+## Business Details
+- Website: ${formData.websiteUrl}
+- Business type: ${formData.businessType}
+- Country: ${formData.country}
+- Target market: ${formData.targetMarket}
+- Contact email: ${formData.contactEmail}
+
+## Data, Cookies, Analytics, and Payments
+- Collects personal data: ${formData.collectsPersonalData ? "Yes" : "No"}
+- Uses cookies: ${formData.usesCookies ? "Yes" : "No"}
+- Analytics provider: ${formData.analyticsProvider || "Not specified"}
+- Payment provider: ${formData.paymentProvider || "Not specified"}
+- Refund policy: ${formData.refundPolicyType || "Not specified"}
+
+## Demo Mode Notice
+This content is intentionally generated from a deterministic demo template because the app is running on Vercel demo mode without a configured AI key. Configure OpenAI, Gemini, or Anthropic to generate live AI drafts.
+
+## Extra Notes
+${formData.extraNotes || "No extra notes were provided."}
+
+## Review
+Review and customize this AI-assisted draft with qualified legal counsel before publishing.`;
+
+    return {
+      title,
+      markdown,
+      html: markdownToBasicHtml(markdown),
+    };
+  });
 }
 
 function buildPrompt(formData: GeneratorFormData, requestedDocuments: readonly DocumentType[]) {

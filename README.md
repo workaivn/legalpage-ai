@@ -17,6 +17,7 @@ It includes a polished marketing site, authentication, user dashboard, document 
 - Admin panel for users, documents, templates, AI settings, and analytics
 - SEO metadata, Open Graph, Twitter cards, structured data, sitemap, and robots.txt
 - File-backed JSON storage for simple CodeCanyon installation
+- Automatic Vercel demo mode with in-memory seeded data
 - Free, Pro, and Agency subscription plans
 - Stripe and LemonSqueezy checkout/webhook integration
 - Usage quotas, credits, billing history, coupons, referrals, affiliate payouts, team workspaces, and white label mode
@@ -37,6 +38,8 @@ npm run dev
 Open `http://localhost:3000`.
 
 The app seeds demo users, documents, templates, settings, and analytics into `data/legalpage-ai.json` on first run.
+
+On Vercel, the app automatically uses in-memory demo storage because the Vercel filesystem is read-only. See `VERCEL_DEMO_MODE.md` and `VPS_PERSISTENT_MODE.md`.
 
 ## Monetization
 

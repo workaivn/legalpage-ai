@@ -2,48 +2,92 @@ import "server-only";
 
 import fs from "node:fs/promises";
 import path from "node:path";
-import { createCommerceDemoData, createSeedDatabase, demoPassword } from "@/lib/demo-data";
-import { defaultBillingSettings, defaultCreditSettings } from "@/lib/demo-data";
+import { createCommerceDemoData, createSeedDatabase, demoPassword, defaultBillingSettings, defaultCreditSettings } from "@/lib/demo-data";
 import { hashPassword } from "@/lib/security";
 import type { AppDatabase } from "@/lib/types";
+
+export interface StorageProvider {
+  read(): Promise<AppDatabase>;
+  write(db: AppDatabase): Promise<void>;
+}
 
 const dataDir = path.join(process.cwd(), "data");
 const dataFile = path.join(dataDir, "legalpage-ai.json");
 
 let writeQueue = Promise.resolve();
+let memoryDatabase: AppDatabase | null = null;
+
+export class FileStorageProvider implements StorageProvider {
+  async read() {
+    await this.ensureDb();
+    const raw = await fs.readFile(dataFile, "utf8");
+    return JSON.parse(raw) as AppDatabase;
+  }
+
+  async write(db: AppDatabase) {
+    await fs.mkdir(dataDir, { recursive: true });
+    writeQueue = writeQueue.then(() => fs.writeFile(dataFile, JSON.stringify(db, null, 2)));
+    await writeQueue;
+  }
+
+  private async ensureDb() {
+    try {
+      await fs.access(dataFile);
+    } catch {
+      await fs.mkdir(dataDir, { recursive: true });
+      await fs.writeFile(dataFile, JSON.stringify(createFreshDatabase(), null, 2));
+    }
+  }
+}
+
+export class MemoryStorageProvider implements StorageProvider {
+  async read() {
+    if (!memoryDatabase) {
+      memoryDatabase = createFreshDatabase();
+    }
+
+    return memoryDatabase;
+  }
+
+  async write(db: AppDatabase) {
+    memoryDatabase = db;
+  }
+}
+
+export function isVercelDemoMode() {
+  return process.env.VERCEL === "1" || Boolean(process.env.VERCEL_ENV);
+}
+
+export function getStorageProvider(): StorageProvider {
+  return isVercelDemoMode() ? new MemoryStorageProvider() : new FileStorageProvider();
+}
 
 export async function readDb(): Promise<AppDatabase> {
-  await ensureDb();
-  const raw = await fs.readFile(dataFile, "utf8");
-  const db = JSON.parse(raw) as AppDatabase;
+  const provider = getStorageProvider();
+  const db = await provider.read();
   const migrated = migrateDb(db);
+
   if (migrated.changed) {
-    await writeDb(migrated.db);
+    await provider.write(migrated.db);
   }
+
   return migrated.db;
 }
 
 export async function writeDb(db: AppDatabase) {
-  await fs.mkdir(dataDir, { recursive: true });
-  writeQueue = writeQueue.then(() => fs.writeFile(dataFile, JSON.stringify(db, null, 2)));
-  await writeQueue;
+  await getStorageProvider().write(db);
 }
 
 export async function updateDb<T>(updater: (db: AppDatabase) => T | Promise<T>) {
+  const provider = getStorageProvider();
   const db = await readDb();
   const result = await updater(db);
-  await writeDb(db);
+  await provider.write(db);
   return result;
 }
 
-async function ensureDb() {
-  try {
-    await fs.access(dataFile);
-  } catch {
-    await fs.mkdir(dataDir, { recursive: true });
-    const passwordHash = hashPassword(demoPassword);
-    await fs.writeFile(dataFile, JSON.stringify(createSeedDatabase(passwordHash), null, 2));
-  }
+function createFreshDatabase() {
+  return createSeedDatabase(hashPassword(demoPassword));
 }
 
 function migrateDb(db: AppDatabase): { db: AppDatabase; changed: boolean } {
