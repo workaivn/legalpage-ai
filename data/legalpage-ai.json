@@ -19,13 +19,7 @@
       "referralCode": "ref_demo"
     }
   ],
-  "sessions": [
-    {
-      "id": "ses_28e1c567be043b9f86aa",
-      "userId": "usr_admin",
-      "expiresAt": "2026-07-01T04:27:42.555Z"
-    }
-  ],
+  "sessions": [],
   "documents": [
     {
       "id": "doc_privacy_demo",

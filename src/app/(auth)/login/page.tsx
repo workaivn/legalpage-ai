@@ -1,18 +1,30 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { loginAction } from "@/app/actions/auth";
 import { AuthCard } from "@/components/AuthCard";
 import { AuthForm } from "@/components/AuthForm";
+import { getCurrentUser } from "@/lib/auth";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const user = await getCurrentUser();
+  if (user) {
+    redirect(user.role === "admin" ? "/admin" : "/dashboard");
+  }
+
   return (
     <AuthCard
       title="Welcome back"
       description="Sign in to generate, save, edit, export, and manage your legal page library."
       footer={
         <>
-          No account? <Link className="font-semibold text-blue-700" href="/register">Create one</Link>
-          <span className="mx-2">·</span>
-          <Link className="font-semibold text-blue-700" href="/forgot-password">Forgot password?</Link>
+          No account?{" "}
+          <Link className="font-semibold text-blue-700" href="/register">
+            Create one
+          </Link>
+          <span className="mx-2">/</span>
+          <Link className="font-semibold text-blue-700" href="/forgot-password">
+            Forgot password?
+          </Link>
         </>
       }
     >

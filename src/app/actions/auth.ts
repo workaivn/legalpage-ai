@@ -30,7 +30,7 @@ export async function loginAction(_state: AuthActionState, formData: FormData): 
     db.analytics.push({ id: `evt_${Date.now()}`, userId: user.id, type: "login", createdAt: new Date().toISOString() });
   });
 
-  redirect("/dashboard");
+  redirect(user.role === "admin" ? "/admin" : "/dashboard");
 }
 
 export async function registerAction(_state: AuthActionState, formData: FormData): Promise<AuthActionState> {
