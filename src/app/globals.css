@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #ffffff;
+  color: #172033;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #020617;
+    color: #f8fafc;
+  }
+}
+
+::selection {
+  background: #c7d2fe;
+  color: #111827;
+}
+
+.accent-text {
+  background: linear-gradient(120deg, #2563eb, #7c3aed);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.accent-ring {
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.16), 0 16px 40px rgba(37, 99, 235, 0.09);
+}

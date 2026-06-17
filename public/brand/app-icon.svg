@@ -1,0 +1,29 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">LegalPage AI app icon</title>
+  <desc id="desc">Blue and purple gradient app icon with a minimal legal scale and document mark.</desc>
+  <defs>
+    <linearGradient id="bg" x1="120" y1="120" x2="904" y2="904" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2563EB"/>
+      <stop offset="0.52" stop-color="#4F46E5"/>
+      <stop offset="1" stop-color="#7C3AED"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(306 228) rotate(46) scale(702)">
+      <stop stop-color="white" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="42" stdDeviation="42" flood-color="#1E1B4B" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+  <rect x="72" y="72" width="880" height="880" rx="224" fill="url(#bg)"/>
+  <rect x="72" y="72" width="880" height="880" rx="224" fill="url(#glow)"/>
+  <g filter="url(#shadow)">
+    <path d="M512 260V710" stroke="white" stroke-width="58" stroke-linecap="round"/>
+    <path d="M340 356H684" stroke="white" stroke-width="58" stroke-linecap="round"/>
+    <path d="M338 356L232 568H444L338 356Z" stroke="white" stroke-width="48" stroke-linejoin="round"/>
+    <path d="M686 356L580 568H792L686 356Z" stroke="white" stroke-width="48" stroke-linejoin="round"/>
+    <path d="M286 752H738" stroke="white" stroke-width="58" stroke-linecap="round"/>
+    <path d="M512 260C574 260 620 286 662 324" stroke="white" stroke-width="42" stroke-linecap="round"/>
+    <path d="M512 260C450 260 404 286 362 324" stroke="white" stroke-width="42" stroke-linecap="round"/>
+  </g>
+</svg>

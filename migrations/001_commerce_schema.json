@@ -1,0 +1,22 @@
+{
+  "id": "001_commerce_schema",
+  "description": "Adds subscriptions, invoices, credits, teams, coupons, referrals, payouts, white label settings, onboarding profiles, billing settings, email logs, and audit logs to the JSON data store.",
+  "appliesTo": "data/legalpage-ai.json",
+  "strategy": "Automatic in src/lib/store.ts via migrateDb(). Existing installs receive missing arrays and settings on first read.",
+  "models": [
+    "Subscription",
+    "Invoice",
+    "CreditTransaction",
+    "Team",
+    "TeamMember",
+    "Coupon",
+    "Referral",
+    "AffiliatePayout",
+    "WhiteLabelSettings",
+    "OnboardingProfile",
+    "BillingSettings",
+    "CreditSettings",
+    "EmailLog",
+    "AuditLog"
+  ]
+}
